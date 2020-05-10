@@ -32,13 +32,13 @@ MATH 228: Introduction to Data Science is a college course, and the work for thi
 
 You can find the TidyTuesday page for these data [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-03-10/readme.md).
 
-General research questions:
+## General research questions:
 
-  - Does one state have a higher avaerage tuition than any other states?
+#  - Does one state have a higher avaerage tuition than any other states?
   - Is there an association between type of school (public, private, for-profit) and price of room and board?
   - Can we predict price of room and board from the available data?
-  - Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
-  - Is there an association between percent of students enrolled that are women and tuition?
+#  - Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
+#  - Is there an association between percent of students enrolled that are women and tuition?
  
   - Is tuition for colleges in Boston significantly different than tuition for colleges in Massachusetts?
   - seven sisters?
@@ -68,7 +68,7 @@ New England states are dominating the top spots for average in-state tuition. Rh
 
 If this were a race, Rhode Island and Massachusetts would have a solid lead over the other 48 states - but this isn't a race, and I don't think anyone would actually want their state to win. 
 
-
+*** 
 Moving away from state data...
 
 
@@ -76,23 +76,49 @@ This might be a long shot, but all is fair in Data Exploration! Is there an asso
 
 ```{r}
 tuition_cost %>% 
-  left_join(diversity_school, by = c("name", "state")) %>% 
+  left_join(diversity_school, by = c("name", "state")) %>% # join together tuition_income and diversity_school data
   filter(category == "Women") %>% 
-  mutate(per_women = enrollment / total_enrollment) %>% 
+  mutate(per_women = enrollment / total_enrollment) %>% # create a variable for percent of women enrolled
   ggplot(aes(x = per_women, y = in_state_tuition)) +
   geom_point() +
   geom_smooth(se = F) +
   facet_wrap(~ type, nrow = 3) +
   theme_bw() +
   labs(x = "Proportion Women Enrolled", y = "In-State Tuition",
-       caption = "Data: Tuitiontracker.org",
+       caption = "Data: Tuitiontracker.org & Chronicle of Higher Education", # tuition_cost from Tuitiontracker.org; diversity_school from Chron. Higher Ed
        title = "Do Women Prefer Pricy Colleges?") +
-  scale_y_continuous(labels = scales::dollar_format())
+  scale_y_continuous(labels = scales::dollar_format()) + # make Y axis labels $
+  scale_x_continuous(labels = scales::percent_format()) # make X axis labels %
  
-
 ```
 
 There doesn't seem to be any clear association between percentage of women enrolled and tuition price. I did remember an interesting tid-bit while looking at this data visualization: "All boys" or "All women" schools are usually private schools, because single-sex public schools won't get financial aid from the government!
+Specific information about the laws regarding this can be can be found [on the wikipedia page for single-sex education](https://en.wikipedia.org/wiki/Single-sex_education#United_States).
+
+***
+
+Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
+
+In order to do this, I first filtered the data so we were only looking at data from 2018 for each school.
+
+```{r}
+tuition_income %>% 
+  filter(year == "2018") %>% #only looking at 2018 data to make this a little less complicated
+  group_by(name) %>% 
+  summarise(av_net = mean(net_cost), # create a variable for average net cost (for all income levels)
+            av_total = mean(total_price)) %>% # need to do this to get aggregate summary stat of total cost
+  mutate(per_paid = av_net / av_total) %>% 
+  ggplot(aes(x = per_paid)) +
+  geom_histogram(color = "white", fill = "chartreuse3") + # I had to put this color in somewhere :)
+  theme_bw() +
+  labs(x = "Percent of Tuition Actually Paid", y = "Number of Schools",
+       caption = "Data: Tuitiontracker.org",
+       title = "Percent of Tuition Paid Out of Pocket") +
+  scale_x_continuous(labels = scales::percent_format()) # make X axis labels %
+```
+
+
+***
 
 
 
