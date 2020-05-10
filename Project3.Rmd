@@ -1,0 +1,38 @@
+---
+title: "Project 3: College-level Analysis"
+author: "Madison Corinha"
+date: "May 10, 2020"
+output: html_document
+---
+
+```{r, warning = FALSE, message = FALSE}
+# Packages! (oh boy there's going to be a lot of these)
+library(tidyverse)
+library(tidymodels)
+library()
+```
+
+What better data is there to perform a *"college-level analysis"* with than data *actually about colleges*!
+
+You can find the TidyTuesday page for these data [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-03-10/readme.md).
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# Data! (TidyTuesday 2020-03-10)
+tuition_cost <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/tuition_cost.csv')
+
+tuition_income <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/tuition_income.csv') 
+
+salary_potential <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/salary_potential.csv')
+
+historical_tuition <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/historical_tuition.csv')
+
+diversity_school <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/diversity_school.csv')
+```
+
+
+# 
+
+
+
+
+
