@@ -9,12 +9,10 @@ output: html_document
 # Packages! (oh boy there's going to be a lot of these)
 library(tidyverse)
 library(tidymodels)
-library()
+library(ggplot2)
+library(ggridges)
 ```
 
-What better data is there to perform a *"college-level analysis"* with than data *actually about colleges*!
-
-You can find the TidyTuesday page for these data [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-03-10/readme.md).
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # Data! (TidyTuesday 2020-03-10)
@@ -30,7 +28,45 @@ diversity_school <- readr::read_csv('https://raw.githubusercontent.com/rfordatas
 ```
 
 
-# 
+MATH 228: Introduction to Data Science is a college course, and the work for this course (at the very least) must match the quality of work generally expected from an undergraduate-level student. For this project, you could say that a "college-level analysis" is required. What better data is there to perform a *"college-level analysis"* with than data *actually about colleges*!
+
+You can find the TidyTuesday page for these data [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-03-10/readme.md).
+
+General research questions:
+
+  - Does one state have a higher avaerage tuition than any other states?
+  - Is there an association between type of school (public, private, for-profit) and price of room and board?
+  - Can we predict price of room and board from the available data?
+  - Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
+  - Is there an association between percent of students enrolled that are women and tuition?
+ 
+  - Is tuition for colleges in Boston significantly different than tuition for colleges in Massachusetts?
+  - seven sisters?
+
+
+
+Let's start with this question: Does one state have a higher in-state tuition than any other states?
+
+```{r}
+tuition_cost %>% 
+  filter(degree_length == "4 Year") %>% # only looking at 4 year colleges
+  group_by(state) %>% 
+  summarise(av_in_state_tu = mean(in_state_tuition)) %>% # creating variable for average in-state tuition for whole state
+  na.omit() %>% # get rid of empty/NA state values
+  ggplot(aes(x = fct_reorder(state, av_in_state_tu), y = av_in_state_tu)) + # fct_reorder() organizes bars in descending order (it looks WAY better!)
+  geom_col() +
+  theme_bw() + # my favorite theme right after theme_void()
+  coord_flip() +
+  labs(x = "", y = "", # x and y axis labels are redundant here
+       title = "Average In-State Tuition by State",
+       subtitle = "For 4-year degree programs",
+       caption = "Source: Tuitiontracker.org") +
+  scale_y_continuous(labels = scales::dollar_format()) # makes y axis labels into $ with commas
+```
+
+
+
+
 
 
 
