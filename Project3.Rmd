@@ -64,8 +64,35 @@ tuition_cost %>%
   scale_y_continuous(labels = scales::dollar_format()) # makes y axis labels into $ with commas
 ```
 
+New England states are dominating the top spots for average in-state tuition. Rhode island has the most expensive average in-state tuition at \$36,114.90, and Massachusetts is a very close second at \$36,081.24 . Wyoming has a surprisingly low average in-state tuition at an even $5,400.
+
+If this were a race, Rhode Island and Massachusetts would have a solid lead over the other 48 states - but this isn't a race, and I don't think anyone would actually want their state to win. 
 
 
+Moving away from state data...
+
+
+This might be a long shot, but all is fair in Data Exploration! Is there an association between percent of students enrolled that are women and tuition? Do women tend to go to pricey schools?
+
+```{r}
+tuition_cost %>% 
+  left_join(diversity_school, by = c("name", "state")) %>% 
+  filter(category == "Women") %>% 
+  mutate(per_women = enrollment / total_enrollment) %>% 
+  ggplot(aes(x = per_women, y = in_state_tuition)) +
+  geom_point() +
+  geom_smooth(se = F) +
+  facet_wrap(~ type, nrow = 3) +
+  theme_bw() +
+  labs(x = "Proportion Women Enrolled", y = "In-State Tuition",
+       caption = "Data: Tuitiontracker.org",
+       title = "Do Women Prefer Pricy Colleges?") +
+  scale_y_continuous(labels = scales::dollar_format())
+ 
+
+```
+
+There doesn't seem to be any clear association between percentage of women enrolled and tuition price. I did remember an interesting tid-bit while looking at this data visualization: "All boys" or "All women" schools are usually private schools, because single-sex public schools won't get financial aid from the government!
 
 
 
