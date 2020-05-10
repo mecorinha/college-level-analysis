@@ -5,12 +5,12 @@ date: "May 10, 2020"
 output: html_document
 ---
 
-```{r, warning = FALSE, message = FALSE}
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # Packages! (oh boy there's going to be a lot of these)
 library(tidyverse)
 library(tidymodels)
 library(ggplot2)
-library(ggridges)
+library(ggridges) # !!! remove if unused by end
 ```
 
 
@@ -36,14 +36,14 @@ You can find the TidyTuesday page for these data [here](https://github.com/rford
 
 #  - Does one state have a higher avaerage tuition than any other states?
   - Is there an association between type of school (public, private, for-profit) and price of room and board?
-  - Can we predict price of room and board from the available data?
+  - Can we predict price of ---- from the available data?
 #  - Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
 #  - Is there an association between percent of students enrolled that are women and tuition?
  
   - Is tuition for colleges in Boston significantly different than tuition for colleges in Massachusetts?
   - seven sisters?
 
-
+***
 
 Let's start with this question: Does one state have a higher in-state tuition than any other states?
 
@@ -99,13 +99,13 @@ Specific information about the laws regarding this can be can be found [on the w
 
 Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
 
-In order to do this, I first filtered the data so we were only looking at data from 2018 for each school.
+In order to do this, I first filtered the data so we were only looking at data from 2018 for each school. I didn't need to keep net cost separated by income level, so I made an aggregate summary statistic for average net cost across all income levels (`av_net`) using `summarize()`. Since I can't use `mutate()` to create a new variable from an aggregate summary stat and a single data point, I made a second aggregate summary statistic for the average total price of tuition called `av_total` in the `summarize()` function (the values for `total_price` that I'm aggregating here should all be the same exact number so taking `mean(total_price)` shouldn't change anything). Now that they are both aggregate summary stats grouped by college name, I can use them both in a `mutate()` to create a variable representing the **average** percent of tuition actually paid. From there, I created a histogram to provide a visualization of the distribution of the average percent of tuition that is actually paid for each school.
 
 ```{r}
 tuition_income %>% 
   filter(year == "2018") %>% #only looking at 2018 data to make this a little less complicated
   group_by(name) %>% 
-  summarise(av_net = mean(net_cost), # create a variable for average net cost (for all income levels)
+  summarize(av_net = mean(net_cost), # create a variable for average net cost (for all income levels)
             av_total = mean(total_price)) %>% # need to do this to get aggregate summary stat of total cost
   mutate(per_paid = av_net / av_total) %>% 
   ggplot(aes(x = per_paid)) +
@@ -113,10 +113,11 @@ tuition_income %>%
   theme_bw() +
   labs(x = "Percent of Tuition Actually Paid", y = "Number of Schools",
        caption = "Data: Tuitiontracker.org",
-       title = "Percent of Tuition Paid Out of Pocket") +
+       title = "Average Percent of Tuition Paid Out of Pocket") +
   scale_x_continuous(labels = scales::percent_format()) # make X axis labels %
 ```
 
+According to this histogram, the most common percentages of tuition actually paid is centered around 50%. The mean percent of tuition actually paid is 49.04%, with a standard deviation of 19.23%. The median percent of tuition actually paid is 50.71%. The number of schools with an average of 0% tuition actually paid is very surprising, and is probably due to missing values or data entry errors, as it does not make sense. 
 
 ***
 
