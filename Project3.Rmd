@@ -22,8 +22,6 @@ tuition_income <- readr::read_csv('https://raw.githubusercontent.com/rfordatasci
 
 salary_potential <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/salary_potential.csv')
 
-historical_tuition <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/historical_tuition.csv')
-
 diversity_school <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/diversity_school.csv')
 ```
 
@@ -147,6 +145,7 @@ tuition_cost_short = tuition_cost %>%
 
 tuition_new = tuition_income %>% 
   rename(state_code = state) %>% 
+  filter(year == "2018") %>% 
   inner_join(tuition_cost_short, by = c("name", "state_code")) %>% 
   mutate(per_paid = net_cost / total_price)
   
@@ -191,6 +190,8 @@ tuition_new %>%
        subtitle = "Public Colleges Only") +
   scale_x_continuous(labels = scales::percent_format())
 ```
+
+All three school types (For-Profit, Public, & Private) show an increase in average percent of tuition actually paid as income level increases. Density plots for For-Profit schools were all centered around 73%-85% of tuition actually paid. Density plots for Private colleges seemed to be centered around 45%-60% of tuition actually paid, and density plots for Public colleges seemed to be centered from 45%-75% of tuition actually paid. For-Profit schools seem to have much higher percentages paid for all income levels than both Public and Private schools do.  
 
 
 
