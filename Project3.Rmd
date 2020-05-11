@@ -193,7 +193,65 @@ tuition_new %>%
 
 All three school types (For-Profit, Public, & Private) show an increase in average percent of tuition actually paid as income level increases. Density plots for For-Profit schools were all centered around 73%-85% of tuition actually paid. Density plots for Private colleges seemed to be centered around 45%-60% of tuition actually paid, and density plots for Public colleges seemed to be centered from 45%-75% of tuition actually paid. For-Profit schools seem to have much higher percentages paid for all income levels than both Public and Private schools do.  
 
+***
 
+One of the parts of the data that we havent talked about yet is a dataset called `salary_potential`. In that dataset, there is a really cool variable called `make_world_better_percent` that represents "the percent of alumni who think they are making the world a better place". 
 
+Can we predict the percent of alumni that think they are making the world a better place using factors about the school they graduated from such as tuition price, type of school, year degree, state, etc.?
 
+I'm going to try this with both a linear model and a decision tree, then compare model performance by looking at the RMSE.
+
+```{r}
+# First we have to clean the data and join salary_potential + tuition_cost to make a new dataset
+tuition_potential = salary_potential %>% 
+  mutate(state_name = str_replace(state_name, pattern = "New-Jersey", replacement = "New Jersey")) %>% 
+  mutate(state_name = str_replace(state_name, pattern = "New-York", replacement = "New York")) %>%
+  mutate(state_name = str_replace(state_name, pattern = "New-Hampshire", replacement = "New Hampshire")) %>%
+  mutate(state_name = str_replace(state_name, pattern = "New-Mexico", replacement = "New Mexico")) %>%
+  mutate(state_name = str_replace(state_name, pattern = "North-Carolina", replacement = "North Carolina")) %>%
+  mutate(state_name = str_replace(state_name, pattern = "North-Dakota", replacement = "North Dakota")) %>%
+  mutate(state_name = str_replace(state_name, pattern = "Rhode-Island", replacement = "Rhode Island")) %>%
+  mutate(state_name = str_replace(state_name, pattern = "South-Carolina", replacement = "South Carolina")) %>%
+  mutate(state_name = str_replace(state_name, pattern = "South-Dakota", replacement = "South Dakota")) %>%
+  mutate(state_name = str_replace(state_name, pattern = "West-Virginia", replacement = "West Virginia")) %>%
+  rename(state = state_name) %>% 
+  inner_join(tuition_cost, by = c("name", "state"))
+
+# Data splitting!
+
+set.seed(1209)
+tuit_split = initial_split(tuition_potential, prop = 0.7)
+
+tuit_train = training(tuit_split)
+tuit_test = testing(tuit_split)
+
+# Linear Regression Model
+
+lm_fit = linear_reg() %>% 
+  set_engine(engine = "lm") %>% 
+  fit(make_world_better_percent ~ in_state_total + state + type + stem_percent, data = tuit_train)
+
+lm_pred = lm_fit %>% 
+  predict(new_data = tuit_test)
+
+tuit_test %>% 
+  mutate(worldbetter_pred = lm_pred$.pred) %>% 
+  rmse(truth = make_world_better_percent, estimate = worldbetter_pred)
+
+# Decision Tree Model
+
+fit_tree = decision_tree() %>% 
+  set_engine(engine = "rpart") %>% 
+  set_mode(mode = "regression") %>% 
+  fit(make_world_better_percent ~ in_state_total + state + type + stem_percent, data = tuit_train)
+
+pred_tree = fit_tree %>% 
+  predict(new_data = tuit_test)
+
+tuit_test %>% 
+  mutate(worldbetter_pred = pred_tree$.pred) %>% 
+  rmse(truth = make_world_better_percent, estimate = worldbetter_pred)
+```
+
+The root mean squared error (RMSE) is lower for the linear regression model (7.57) than it is for the decision tree model (8.77), suggesting that the linear regression model is the "better" fit model.
 
