@@ -130,7 +130,8 @@ tuition_income %>%
   geom_density_ridges() +
   labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
        caption = "Data: Tuitiontracker.org",
-       title = "Percent of Tuition Paid by Income Level")
+       title = "Percent of Tuition Paid by Income Level") +
+  scale_x_continuous(labels = scales::percent_format())
 ```
 
 Percent of tuition actually paid seems to increase as income level increases, suggesting that financial aid is possibly given based on need. 
@@ -154,11 +155,12 @@ ggplot(tuition_new, aes(x = per_paid, y = income_lvl)) +
   facet_wrap(~ type, nrow = 3) +
   labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
        caption = "Data: Tuitiontracker.org",
-       title = "Percent of Tuition Paid by Income Level and School Type")
+       title = "Percent of Tuition Paid by Income Level and School Type") +
+  scale_x_continuous(labels = scales::percent_format())
 ```
 
 ```{r, eval=FALSE, echo=FALSE}
-# 3 different graphs, if the facet_wrap is too small
+# Optional 3 different graphs, if the facet_wrap is too small
 tuition_new %>% 
   filter(type == "For Profit") %>% 
   ggplot(aes(x = per_paid, y = income_lvl)) +
@@ -166,7 +168,8 @@ tuition_new %>%
   labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
        caption = "Data: Tuitiontracker.org",
        title = "Percent of Tuition Paid by Income Level",
-       subtitle = "For Profit Colleges Only")
+       subtitle = "For Profit Colleges Only") +
+  scale_x_continuous(labels = scales::percent_format())
 
 tuition_new %>% 
   filter(type == "Private") %>% 
@@ -175,7 +178,8 @@ tuition_new %>%
   labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
        caption = "Data: Tuitiontracker.org",
        title = "Percent of Tuition Paid by Income Level",
-       subtitle = "Private Colleges Only")
+       subtitle = "Private Colleges Only") +
+  scale_x_continuous(labels = scales::percent_format())
 
 tuition_new %>% 
   filter(type == "Public") %>% 
@@ -184,7 +188,8 @@ tuition_new %>%
   labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
        caption = "Data: Tuitiontracker.org",
        title = "Percent of Tuition Paid by Income Level",
-       subtitle = "Public Colleges Only")
+       subtitle = "Public Colleges Only") +
+  scale_x_continuous(labels = scales::percent_format())
 ```
 
 
