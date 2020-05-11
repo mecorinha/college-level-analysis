@@ -10,7 +10,7 @@ output: html_document
 library(tidyverse)
 library(tidymodels)
 library(ggplot2)
-library(ggridges) # !!! remove if unused by end
+library(ggridges)
 ```
 
 
@@ -30,20 +30,21 @@ MATH 228: Introduction to Data Science is a college course, and the work for thi
 
 You can find the TidyTuesday page for these data [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-03-10/readme.md).
 
-## General research questions:
+The four datasets I will be using from this TidyTuesday page are named as follows: `tuition_cost`, `tuition_income`, `salary_potential` and `diversity_school`.
 
-#  - Does one state have a higher avaerage tuition than any other states?
-  - Is there an association between type of school (public, private, for-profit) and price of room and board?
-  - Can we predict price of ---- from the available data?
-#  - Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
-#  - Is there an association between percent of students enrolled that are women and tuition?
- 
-  - Is tuition for colleges in Boston significantly different than tuition for colleges in Massachusetts?
-  - seven sisters?
+
+## Research questions:
+
+  - Does one state have a higher avaerage tuition than any other states?
+  - Is there an association between percent of students enrolled that are women and tuition?
+  - Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
+  - Can we predict the percent of alumni that think they are making the world a better place using factors about the school they graduated from such as tuition price, type of school, year degree, state, etc.? 
 
 ***
 
-Let's start with this question: Does one state have a higher in-state tuition than any other states?
+Let's start with this question: 
+
+> Does one state have a higher in-state tuition than any other states?
 
 ```{r}
 tuition_cost %>% 
@@ -69,8 +70,9 @@ If this were a race, Rhode Island and Massachusetts would have a solid lead over
 *** 
 Moving away from state data...
 
+This might be a long shot, but all is fair in Data Exploration! 
 
-This might be a long shot, but all is fair in Data Exploration! Is there an association between percent of students enrolled that are women and tuition? Do women tend to go to pricey schools?
+> Is there an association between percent of students enrolled that are women and tuition? Do women tend to go to pricey schools?
 
 ```{r}
 tuition_cost %>% 
@@ -90,12 +92,16 @@ tuition_cost %>%
  
 ```
 
-There doesn't seem to be any clear association between percentage of women enrolled and tuition price. I did remember an interesting tid-bit while looking at this data visualization: "All boys" or "All women" schools are usually private schools, because single-sex public schools won't get financial aid from the government!
+There doesn't seem to be any clear association between percentage of women enrolled and tuition price, so I will not go any futher into this question. I did remember an interesting tid-bit while looking at this data visualization: "All boys" or "All women" schools are usually private schools, because single-sex public schools won't get financial aid from the government!
 Specific information about the laws regarding this can be can be found [on the wikipedia page for single-sex education](https://en.wikipedia.org/wiki/Single-sex_education#United_States).
 
 ***
 
-Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
+After the last research question didn't give us any particularly interesting trends, I have high hopes for this next question!
+
+The `tuition_income` dataset includes a variable called `net_cost` that represents the "average amount actually paid after scholarship/award" for each of 5 levels of `income_bracket` for each school across several years. 
+
+> Are there any trends in the difference between total cost for tuition and net cost for tuition (average actually paid after scholarships/awards)?
 
 In order to do this, I first filtered the data so we were only looking at data from 2018 for each school. I didn't need to keep net cost separated by income level, so I made an aggregate summary statistic for average net cost across all income levels (`av_net`) using `summarize()`. Since I can't use `mutate()` to create a new variable from an aggregate summary stat and a single data point, I made a second aggregate summary statistic for the average total price of tuition called `av_total` in the `summarize()` function (the values for `total_price` that I'm aggregating here should all be the same exact number so taking `mean(total_price)` shouldn't change anything). Now that they are both aggregate summary stats grouped by college name, I can use them both in a `mutate()` to create a variable representing the **average** percent of tuition actually paid. From there, I created a histogram to provide a visualization of the distribution of the average percent of tuition that is actually paid for each school.
 
@@ -197,7 +203,7 @@ All three school types (For-Profit, Public, & Private) show an increase in avera
 
 One of the parts of the data that we havent talked about yet is a dataset called `salary_potential`. In that dataset, there is a really cool variable called `make_world_better_percent` that represents "the percent of alumni who think they are making the world a better place". 
 
-Can we predict the percent of alumni that think they are making the world a better place using factors about the school they graduated from such as tuition price, type of school, year degree, state, etc.?
+> Can we predict the percent of alumni that think they are making the world a better place using factors about the school they graduated from such as tuition price, type of school, year degree, state, etc.?
 
 I'm going to try this with both a linear model and a decision tree, then compare model performance by looking at the RMSE.
 
@@ -254,4 +260,8 @@ tuit_test %>%
 ```
 
 The root mean squared error (RMSE) is lower for the linear regression model (7.57) than it is for the decision tree model (8.77), suggesting that the linear regression model is the "better" fit model.
+
+***
+
+If you have stuck with this so far, I hope you learned something interesting about college tuition data! I had fun exploring some intereting research questions for this project, and I hope it is fun for anyone who reads this too.
 
