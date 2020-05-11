@@ -28,10 +28,9 @@ diversity_school <- readr::read_csv('https://raw.githubusercontent.com/rfordatas
 
 MATH 228: Introduction to Data Science is a college course, and the work for this course (at the very least) must match the quality of work generally expected from an undergraduate-level student. For this project, you could say that a "college-level analysis" is required. What better data is there to perform a *"college-level analysis"* with than data *actually about colleges*!
 
-You can find the TidyTuesday page for these data [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-03-10/readme.md).
-
 The four datasets I will be using from this TidyTuesday page are named as follows: `tuition_cost`, `tuition_income`, `salary_potential` and `diversity_school`.
 
+You can find the TidyTuesday page for these data [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-03-10/readme.md).
 
 ## Research questions:
 
@@ -93,6 +92,7 @@ tuition_cost %>%
 ```
 
 There doesn't seem to be any clear association between percentage of women enrolled and tuition price, so I will not go any futher into this question. I did remember an interesting tid-bit while looking at this data visualization: "All boys" or "All women" schools are usually private schools, because single-sex public schools won't get financial aid from the government!
+
 Specific information about the laws regarding this can be can be found [on the wikipedia page for single-sex education](https://en.wikipedia.org/wiki/Single-sex_education#United_States).
 
 ***
@@ -124,7 +124,7 @@ tuition_income %>%
 According to this histogram, the most common percentages of tuition actually paid is centered around 50%. The mean percent of tuition actually paid is 49.04%, with a standard deviation of 19.23%. The median percent of tuition actually paid is 50.71%. The number of schools with an average of 0% tuition actually paid is very surprising, and is probably due to missing values or data entry errors, as it does not make sense. This is troubling to see, as it raises questions about the validity of the data. 
 
 
-The above data visualization uses the *average* net cost *for all income levels*. What if we keep the data separated by income level?
+> The above data visualization uses the *average* net cost *for all income levels*. What if we keep the data separated by income level?
 
 ```{r}
 tuition_income %>% 
@@ -141,7 +141,7 @@ tuition_income %>%
 Percent of tuition actually paid seems to increase as income level increases, suggesting that financial aid is possibly given based on need. 
 
 
-What if we also separated this based on school type (Public, Private, For-Profit)?
+> What if we also separated this based on school type (Public, Private, For-Profit)?
 
 In order to do this, we have to join together the `tuition_income` data with the `tuition_cost` data:
 
