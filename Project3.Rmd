@@ -117,10 +117,75 @@ tuition_income %>%
   scale_x_continuous(labels = scales::percent_format()) # make X axis labels %
 ```
 
-According to this histogram, the most common percentages of tuition actually paid is centered around 50%. The mean percent of tuition actually paid is 49.04%, with a standard deviation of 19.23%. The median percent of tuition actually paid is 50.71%. The number of schools with an average of 0% tuition actually paid is very surprising, and is probably due to missing values or data entry errors, as it does not make sense. 
+According to this histogram, the most common percentages of tuition actually paid is centered around 50%. The mean percent of tuition actually paid is 49.04%, with a standard deviation of 19.23%. The median percent of tuition actually paid is 50.71%. The number of schools with an average of 0% tuition actually paid is very surprising, and is probably due to missing values or data entry errors, as it does not make sense. This is troubling to see, as it raises questions about the validity of the data. 
 
-***
 
+The above data visualization uses the *average* net cost *for all income levels*. What if we keep the data separated by income level?
+
+```{r}
+tuition_income %>% 
+  filter(year == "2018") %>% # still just focusing on 2018 data
+  mutate(per_paid = net_cost / total_price) %>% 
+  ggplot(aes(x = per_paid, y = income_lvl)) +
+  geom_density_ridges() +
+  labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
+       caption = "Data: Tuitiontracker.org",
+       title = "Percent of Tuition Paid by Income Level")
+```
+
+Percent of tuition actually paid seems to increase as income level increases, suggesting that financial aid is possibly given based on need. 
+
+
+What if we also separated this based on school type (Public, Private, For-Profit)?
+
+In order to do this, we have to join together the `tuition_income` data with the `tuition_cost` data:
+
+```{r}
+tuition_cost_short = tuition_cost %>% 
+  select(name, state, state_code, type)
+
+tuition_new = tuition_income %>% 
+  rename(state_code = state) %>% 
+  inner_join(tuition_cost_short, by = c("name", "state_code")) %>% 
+  mutate(per_paid = net_cost / total_price)
+  
+ggplot(tuition_new, aes(x = per_paid, y = income_lvl)) +
+  geom_density_ridges() +
+  facet_wrap(~ type, nrow = 3) +
+  labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
+       caption = "Data: Tuitiontracker.org",
+       title = "Percent of Tuition Paid by Income Level and School Type")
+```
+
+```{r, eval=FALSE, echo=FALSE}
+# 3 different graphs, if the facet_wrap is too small
+tuition_new %>% 
+  filter(type == "For Profit") %>% 
+  ggplot(aes(x = per_paid, y = income_lvl)) +
+  geom_density_ridges() +
+  labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
+       caption = "Data: Tuitiontracker.org",
+       title = "Percent of Tuition Paid by Income Level",
+       subtitle = "For Profit Colleges Only")
+
+tuition_new %>% 
+  filter(type == "Private") %>% 
+  ggplot(aes(x = per_paid, y = income_lvl)) +
+  geom_density_ridges() +
+  labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
+       caption = "Data: Tuitiontracker.org",
+       title = "Percent of Tuition Paid by Income Level",
+       subtitle = "Private Colleges Only")
+
+tuition_new %>% 
+  filter(type == "Public") %>% 
+  ggplot(aes(x = per_paid, y = income_lvl)) +
+  geom_density_ridges() +
+  labs(x = "Percent of Tuition Actually Paid", y = "Income Level",
+       caption = "Data: Tuitiontracker.org",
+       title = "Percent of Tuition Paid by Income Level",
+       subtitle = "Public Colleges Only")
+```
 
 
 
